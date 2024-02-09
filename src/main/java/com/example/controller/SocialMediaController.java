@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
 import com.example.repository.AccountRepository;
 import com.example.service.AccountService;
+import com.example.service.MessageService;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -25,6 +28,9 @@ import com.example.service.AccountService;
 public class SocialMediaController {
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private MessageService messageService;
 
 //   ## 1: Our API should be able to process new User registrations.
 
@@ -45,5 +51,36 @@ public ResponseEntity<Account> createNewAccount(@RequestBody Account newAccount 
 public ResponseEntity<Account> login(@RequestBody Account account){
     return this.accountService.login(account);
 }
+
+// ## 3: Our API should be able to process the creation of new messages.
+
+// As a user, I should be able to submit a new post on the endpoint POST localhost:8080/messages. 
+// 
+// The request body will contain a JSON representation of a message, which should be persisted to 
+// the database, but will not contain a message_id.
+// - The creation of the message will be successful if and only if the message_text is not blank, 
+// is not over 255 characters, and posted_by refers to a real, existing user. If successful, the 
+// response body should contain a JSON of the message, including its message_id. The response status 
+// should be 200, which is the default. The new message should be persisted to the database.
+// - If the creation of the message is not successful, the response status should be 400. (Client error)
+@PostMapping("messages")
+public ResponseEntity<Message> createMessage(@RequestBody Message message){
+    Optional<Account> optional = this.accountService.findById(message.getPosted_by());
+    String messageText = message.getMessage_text();
+    int messageLength = messageText.length();
+    if (!optional.isEmpty() && messageText != null){
+        if(messageLength <= 255 && !messageText.isBlank()){
+            Message createdMessage = this.messageService.createMessage(message);
+            return ResponseEntity.status(200).body(createdMessage);
+        }
+    }
+    return ResponseEntity.status(400).body(message);
+    }
+
+//     ## 4: Our API should be able to retrieve all messages.
+
+// As a user, I should be able to submit a GET request on the endpoint GET localhost:8080/messages.
+
+// - The response body should contain a JSON representation of a list containing all messages retrieved from the database. It is expected for the list to simply be empty if there are no messages. The response status should always be 200, which is the default.
 
 }
