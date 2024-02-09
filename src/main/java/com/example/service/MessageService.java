@@ -45,4 +45,17 @@ public class MessageService {
         return 0;
     }
 
+    public int updateMessageById(int message_id, String new_message_String) {
+        Optional<Message> found = this.messageRepository.findById(message_id);
+        if(!found.isEmpty()){
+            Message foundMessage = found.get();
+            foundMessage.setMessage_text(new_message_String);
+            this.messageRepository.deleteById(message_id);
+            this.messageRepository.save(foundMessage);
+            return 1;
+        }
+        
+        return 0;
+    }
+
 }
