@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -81,6 +83,29 @@ public ResponseEntity<Message> createMessage(@RequestBody Message message){
 
 // As a user, I should be able to submit a GET request on the endpoint GET localhost:8080/messages.
 
-// - The response body should contain a JSON representation of a list containing all messages retrieved from the database. It is expected for the list to simply be empty if there are no messages. The response status should always be 200, which is the default.
+// - The response body should contain a JSON representation of a list containing all messages retrieved
+//  from the database. It is expected for the list to simply be empty if there are no messages. 
+// The response status should always be 200, which is the default.
+    @GetMapping("messages")
+    public ResponseEntity<List<Message>> getMessages(){
+        List<Message> messageList = this.messageService.findAllMessages();
+        return ResponseEntity.status(200).body(messageList);
+    }
+
+// ## 5: Our API should be able to retrieve a message by its ID.
+
+// As a user, I should be able to submit a GET request on the endpoint GET localhost:8080/messages/{message_id}.
+
+// - The response body should contain a JSON representation of the message identified by the message_id. 
+// It is expected for the response body to simply be empty if there is no such message. 
+// The response status should always be 200, which is the default.
+@GetMapping("messages/{message_id}")
+    public ResponseEntity<Message> getMessageById(@PathVariable int message_id){
+        Optional<Message> message = this.messageService.findMessageById(message_id);
+        if(message.isEmpty()){
+            return ResponseEntity.status(200).body(null);
+        }
+        return ResponseEntity.status(200).body(message.get());
+    }
 
 }

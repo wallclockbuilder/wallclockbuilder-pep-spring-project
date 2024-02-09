@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,14 @@ public class MessageService {
             return this.messageRepository.save(message);
         }
         return null;
+    }
+
+    public List<Message> findAllMessages() {
+        return this.messageRepository.findAll();
+    }
+
+    public Optional<Message> findMessageById(int message_id) {
+        return this.messageRepository.findById(message_id);
     }
 
 }
