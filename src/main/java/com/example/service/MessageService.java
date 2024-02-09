@@ -36,4 +36,13 @@ public class MessageService {
         return this.messageRepository.findById(message_id);
     }
 
+    public int deleteMessage(int message_id) {
+        Optional<Message> found = this.messageRepository.findById(message_id);
+        if(!found.isEmpty()){
+            this.messageRepository.deleteById(message_id);
+            return 1;
+        }
+        return 0;
+    }
+
 }
