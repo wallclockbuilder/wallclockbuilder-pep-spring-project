@@ -153,4 +153,18 @@ public class SocialMediaController {
         }
         return ResponseEntity.status(400).body(null);
     }
+
+
+//     ## 8: Our API should be able to retrieve all messages written by a particular user.
+
+// As a user, I should be able to submit a GET request on the endpoint GET localhost:8080/accounts/{account_id}/messages.
+// - The response body should contain a JSON representation of a list containing all messages posted by a particular user,
+//  which is retrieved from the database. It is expected for the list to simply be empty if there are no messages. 
+// The response status should always be 200, which is the default.
+@GetMapping("accounts/{account_id}/messages")
+public ResponseEntity<List<Message>> retrieveMessagesByUserId(@PathVariable int account_id){
+    List<Message> messages = this.messageService.findByAccountId(account_id);
+    return ResponseEntity.status(200).body(messages);
+}
+
 }

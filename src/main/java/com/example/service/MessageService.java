@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,17 @@ public class MessageService {
         }
         
         return 0;
+    }
+
+    public List<Message> findByAccountId(int account_id){
+        Optional<Message> found = this.messageRepository.findById(account_id);
+        List<Message> messageList = new LinkedList<>();
+        if(!found.isEmpty()){
+            Message found_message = found.get();
+            messageList.add(found_message);
+            return messageList;
+        }
+        return messageList;
     }
 
 }
